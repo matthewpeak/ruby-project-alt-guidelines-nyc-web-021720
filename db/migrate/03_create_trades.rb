@@ -7,6 +7,8 @@ class CreateTrades < ActiveRecord::Migration[5.2]
             t.integer :seller_id
             t.integer :price
             t.integer :quantity_of_corn
+            t.boolean :pending_buyer
+            t.boolean :pending_seller
         end 
     end 
 

@@ -14,6 +14,7 @@ ActiveRecord::Schema.define(version: 3) do
 
   create_table "farmers", force: :cascade do |t|
     t.string "name"
+    t.integer "cash"
     t.integer "corn"
     t.string "password"
   end
@@ -21,6 +22,7 @@ ActiveRecord::Schema.define(version: 3) do
   create_table "traders", force: :cascade do |t|
     t.string "name"
     t.integer "cash"
+    t.integer "corn"
     t.string "password"
   end
 
@@ -29,6 +31,8 @@ ActiveRecord::Schema.define(version: 3) do
     t.integer "seller_id"
     t.integer "price"
     t.integer "quantity_of_corn"
+    t.boolean "pending_buyer"
+    t.boolean "pending_seller"
   end
 
 end
