@@ -10,13 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 3) do
+ActiveRecord::Schema.define(version: 5) do
+
+  create_table "bids", force: :cascade do |t|
+    t.datetime "timestamp"
+    t.integer "price"
+    t.integer "quantity"
+    t.integer "buyer_id"
+  end
 
   create_table "farmers", force: :cascade do |t|
     t.string "name"
     t.integer "cash"
     t.integer "corn"
     t.string "password"
+  end
+
+  create_table "offers", force: :cascade do |t|
+    t.datetime "timestamp"
+    t.integer "price"
+    t.integer "quantity"
+    t.integer "seller_id"
   end
 
   create_table "traders", force: :cascade do |t|
