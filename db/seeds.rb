@@ -6,8 +6,11 @@ Cornelius = Farmer.create(name:"Cornelius",cash:0, corn:1000000, password:"1")
 
 Billy  = Farmer.create(name:"Billy", cash:0,corn:1000000,password:"1")
 
-T1 = Trade.create(buyer_id:Og.id ,seller_id:Billy.id,price:10,quantity_of_corn:100,pending_buyer:false,pending_seller:true)
-
+T1 = Trade.create(buyer_id:Og.id ,seller_id:Billy.id,price:10,quantity_of_corn:100,pending_buyer:false,pending_seller:false)
+T2 =  Trade.create(buyer_id:Og.id ,seller_id:Billy.id,price:50,quantity_of_corn:300,pending_buyer:false,pending_seller:false)
+T3 =  Trade.create(buyer_id:Matt.id ,seller_id:Billy.id,price:10,quantity_of_corn:20,pending_buyer:false,pending_seller:false)
+T4 =  Trade.create(buyer_id:Og.id ,seller_id:Billy.id,price:800,quantity_of_corn:300,pending_buyer:false,pending_seller:false)
+T5 =  Trade.create(buyer_id:Og.id ,seller_id:Billy.id,price:500,quantity_of_corn:200,pending_buyer:false,pending_seller:false)
 
 
 B1=Bid.create(timestamp:Time.now, price:95, quantity:10,buyer_id:Og.id )
