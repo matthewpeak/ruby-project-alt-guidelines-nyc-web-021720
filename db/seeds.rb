@@ -1,10 +1,10 @@
-Matt = Trader.create(name:"Matt",cash:1000,corn:0,password:1)
+Matt = Trader.create(name:"Matt",cash:1000,corn:0,password:"1")
 
-Og = Trader.create(name:"Og",cash:1000,corn:0,password:1)
+Og = Trader.create(name:"Og",cash:1000,corn:0,password:"1")
 
-Cornelius = Farmer.create(name:"Cornelius", corn:1000000, password:1)
+Cornelius = Farmer.create(name:"Cornelius",cash:0, corn:1000000, password:"1")
 
-Billy  = Farmer.create(name:"Billy", cash:0,corn:1000000,password:1)
+Billy  = Farmer.create(name:"Billy", cash:0,corn:1000000,password:"1")
 
 T1 = Trade.create(buyer_id:Og.id ,seller_id:Billy.id,price:10,quantity_of_corn:100,pending_buyer:false,pending_seller:true)
 
@@ -17,6 +17,8 @@ B4=Bid.create(timestamp:Time.now, price:100, quantity:40,buyer_id:Og.id )
 
 
 O1=Offer.create(timestamp:Time.now, price:105, quantity:5,seller_id:Cornelius.id)
-O2=Offer.create(timestamp:Time.now, price:100, quantity:7,seller_id:Billy.id)
-O3=Offer.create(timestamp:Time.now, price:110, quantity:8,seller_id:Matt.id)
-O4=Offer.create(timestamp:Time.now, price:115, quantity:4,seller_id:Og.id)
+O2=Offer.create(timestamp:Time.now, price:100, quantity:50,seller_id:Billy.id)
+O3=Offer.create(timestamp:Time.now, price:110, quantity:100,seller_id:Billy.id)
+O4=Offer.create(timestamp:Time.now, price:115, quantity:20,seller_id:Cornelius.id)
+O5=Offer.create(timestamp:Time.now, price:120, quantity:10,seller_id:Billy.id)
+O6=Offer.create(timestamp:Time.now, price:125, quantity:80,seller_id:Billy.id)

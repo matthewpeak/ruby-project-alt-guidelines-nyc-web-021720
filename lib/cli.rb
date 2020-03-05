@@ -9,6 +9,11 @@ def get_user_string
     gets.chomp.to_s
 end 
 
+def is_trader?(user)
+    user.instance_of? Trader
+end 
+
+
 def login_menu 
     puts "1.login"
     puts "2.create new account"
@@ -46,7 +51,6 @@ def create_user
         password = get_user_string
         puts "How much corn you got"
         corn = get_user_integer
-         
         home_menu(create_farmer(name,corn,password))
     elsif type =="Trader" && !Trader.find_by(name:name)
         puts "Password?"
@@ -81,6 +85,7 @@ def login
        else
         puts "wrong pass"
        end 
+       login_menu
     end 
     
 end
@@ -100,9 +105,6 @@ def buy_corn_otc(user)
     Trade.create(seller_id:seller_id,buyer_id:user.id,price:price, quantity_of_corn:quantity_of_corn,pending_buyer:false,pending_seller:true)
     home_menu(user)
 end 
-
-
-
 
 
 
@@ -180,8 +182,8 @@ def place_bid(user)
     puts "At what price ???"
     price = get_user_integer
     puts "Generating bid "
-    Bid.create(price:price, quantity:quantity_of_corn,buyer_id:user.id,timestamp: Time.now,seller_id:nil)
-    home_menu(user)
+    Bid.create(price:price, quantity:quantity_of_corn,buyer_id:user.id,timestamp: Time.now)
+    display_market(user)
 end 
 
 def place_offer(user)
@@ -190,120 +192,164 @@ def place_offer(user)
     puts "At what price ???"
     price = get_user_integer
     puts "Generating bid "
-    Bid.create(price:price, quantity:quantity_of_corn,buyer_id:nil,timestamp: Time.now, seller_id:user.id)
-    home_menu(user)
+    Offer.create(price:price, quantity:quantity_of_corn,timestamp: Time.now, seller_id:user.id)
+    display_market(user)
 
 end
+
+def market_buy(user,display_offers)
+      #this is what we need to create
+      x = Trade.create(seller_id:display_offers[0].seller_id,buyer_id:user.id,price:display_offers[0].price, quantity_of_corn:display_offers[0].quantity,pending_buyer:false,pending_seller:false)
+      #Delete the bid remove the bid from the data base
+      Offer.find(display_offers[0].id).destroy
+      total = x.price * x.quantity_of_corn
+      #who ever generated the offer we adjust their totals 
+      seller = Farmer.find(x.seller_id)
+      seller.update(cash:seller.cash+total,corn:seller.corn-x.quantity_of_corn)
+      #below updates the user totals 
+      user.update(cash:user.cash-total, corn:user.corn+x.quantity_of_corn)
+      #refreshes the market
+      display_market(user)
+end 
+
+def market_sell(user,display_bids)
+    #this is what we need to create
+    x = Trade.create(seller_id:user.id,buyer_id:display_bids[0].buyer_id,price:display_bids[0].price, quantity_of_corn:display_bids[0].quantity,pending_buyer:false,pending_seller:false)
+    #Delete the bid remove the bid from the data base
+    Bid.find(display_bids[0].id).destroy
+    total = x.price * x.quantity_of_corn
+    #who ever generated the offer we adjust their totals 
+    buyer = Trader.find(x.buyer_id)
+    user.update(cash:user.cash+total,corn:user.corn-x.quantity_of_corn)
+    #below updates the user totals 
+    buyer.update(cash:buyer.cash-total, corn:buyer.corn+x.quantity_of_corn)
+    #refreshes the market
+    display_market(user)
+end
+
+def find_trader_trades(user)
+    Trade.all.select{|elem| elem.buyer_id == user.id && pending_buyer == false}
+end 
+
+def find_farmer_trades(user)
+    Trade.all.select{|elem| elem.seller_id ==user.id && pending_seller == false}
+end
+
 
 def display_market(user)
     display_bids =   Bid.all.sort_by {|bid| bid.price}.reverse[0..2]
     display_offers = Offer.all.sort_by{|offer| offer.price}[0..2]   
     
     
-    puts "3. price:#{display_offers[2].price},quantity:#{display_offers[2].quantity}"
-    puts "2. price:#{display_offers[1].price},quantity:#{display_offers[1].quantity}"
-    puts "1. price:#{display_offers[0].price},quantity:#{display_offers[0].quantity}"
+    puts "3. price:#{display_offers[2].price},quantity:#{display_offers[2].quantity}".colorize(:red)
+    puts "2. price:#{display_offers[1].price},quantity:#{display_offers[1].quantity}".colorize(:red)
+    puts "1. price:#{display_offers[0].price},quantity:#{display_offers[0].quantity}".colorize(:red)
     puts "===========OFFERS==============="
    
    
     puts "============BIDS================"
-    puts "1. price :#{display_bids[0].price}, quantity:#{display_bids[0].quantity} "
-    puts "2. price :#{display_bids[1].price}, quantity:#{display_bids[1].quantity} "
-    puts "3. price :#{display_bids[2].price}, quantity:#{display_bids[2].quantity} "
-
-    puts "PRESS B TO BUY PRESS S TO SELL Press E to exit:"
-   
-        
-    case(get_user_string.capitalize)
-       when "B" 
-        #this is what we need to create
-        x = Trade.create(seller_id:display_offers[0].seller_id,buyer_id:user.id,price:display_offers[0].price, quantity_of_corn:display_offers[0].quantity,pending_buyer:false,pending_seller:false)
-        #Delete the bid remove the bid from the data base
-         Offer.find(display_offers[0].id).destroy
-        total = x.price * x.quantity_of_corn
-        #who ever generated the offer we adjust their totals 
-        seller = Farmer.find(x.seller_id)
-        seller.update(cash:seller.cash+total,corn:seller.corn-x.quantity_of_corn)
-        #below updates the user totals 
-        user.update(cash:user.cash-total, corn:user.corn+x.quantity_of_corn)
-        #refreshes the market
-        display_market(user)
-       when "S"
-           #this is what we need to create
-           x = Trade.create(seller_id:user.id,buyer_id:display_bids[0].buyer_id,price:display_bids[0].price, quantity_of_corn:display_bids[0].quantity,pending_buyer:false,pending_seller:false)
-           #Delete the bid remove the bid from the data base
-          Bid.find(display_bids[0].id).destroy
-           total = x.price * x.quantity_of_corn
-           #who ever generated the offer we adjust their totals 
-           buyer = Trader.find(x.buyer_id)
-           user.update(cash:user.cash+total,corn:user.corn-x.quantity_of_corn)
-           #below updates the user totals 
-           buyer.update(cash:buyer.cash-total, corn:buyer.corn+x.quantity_of_corn)
-           #refreshes the market
-           display_market(user)
-       when "E"
-       home_menu(user)
-    end
+    puts "1. price :#{display_bids[0].price}, quantity:#{display_bids[0].quantity} ".colorize(:green)
+    puts "2. price :#{display_bids[1].price}, quantity:#{display_bids[1].quantity} ".colorize(:green)
+    puts "3. price :#{display_bids[2].price}, quantity:#{display_bids[2].quantity} ".colorize(:green)
+    
+    if is_trader?(user)
+       puts "TYPE M TO MARKET BUY, B TO PLACE A BID, E TO EXIT:".colorize(:green)
+       case(get_user_string.capitalize)
+         when "M" 
+          market_buy(user,display_offers)
+       
+         when"B"
+         place_bid(user)
+       
+         when "E"
+         home_menu(user)
+       end
+    else
+       puts "TYPE M TO MARKET SELL, S TO PLACE AN OFFER, E TO EXIT:".colorize(:red)
+       case(get_user_string.capitalize)
+         when "M"
+         market_sell(user,display_bids)
+      
+         when "S"
+         place_offer(user) 
+     
+         when "E"
+         home_menu(user)
+        end
+   end 
+              
 end 
 
 
 def home_menu(user)
+    puts "Welcome #{user.name}, trade dat corn baby!".colorize(:yellow)
     puts "1.Amount of Corn"
     puts "2.Amount of Cash"
     puts "3.Trade"
-    puts "4.Pending Trades"
-    puts "5.Stats"
-    puts "6.Log Off"
+    puts "4.Stats"
+    puts "5.Log Off"
     case(get_user_integer)
     
         when 1
-         puts user.corn
+         puts ""
+         puts ""
+         puts ""
+         puts "You have #{user.corn} pieces of corn!".colorize(:yellow)
+         puts ""
+         puts ""
+         puts ""
          home_menu(user)
         when 2
-         puts user.cash
+         puts ""
+         puts ""
+         puts ""
+         puts "you have #{user.cash} dollars".colorize(:green)
+         puts ""
+         puts ""
+         puts ""
          home_menu(user)
         when 3
          puts "1.Market"
          puts "2.OTC"
          case(get_user_integer)
-         when 1
-          puts "1.Display Market"
-          puts "2.Place Bid"
-          puts "3.Place Offer"
-          case(get_user_integer)
-          when 1
-          display_market(user)
-          when 2
-            place_bid(user)
-          when 3
-            place_offer(user)
-          end 
-         when 2 
-            puts "1.Buy Corn OTC"
-            puts "2.Sell Corn OTC"
-    
-            case(get_user_integer)
-            when 1
-            buy_corn_otc(user) 
-            when 2
-            sell_corn_otc(user)
-            end 
-         end 
-         
-        when 4
+           when 1
+           display_market(user)
+          
+           when 2 
+            if is_trader?(user)
+             puts "1.Buy Corn OTC"
+             puts "2.Pending OTC Trades"
+             case(get_user_integer)
+               when 1
+               buy_corn_otc(user) 
+               when 2
+               pending_buys(user)
+             end 
+            else 
+             puts "1.Sell Corn OTC"
+             puts "2.Pending OTC Trades"
+             case(get_user_integer)
+              when 1
+               sell_corn_otc(user) 
+              when 2
+               pending_sales(user)
+             end 
             
-            puts "1.pending buys"
-            puts "2.pending sells"
-            case(get_user_integer)
-            when 1
-            pending_buys(user)
-            when 2 
-            pending_sales(user)
-            end
-         when 5
-         Trade.find_by(seller_id: user.id)
-         home_menu(user)
-         when 6 
+            end 
+        end 
+         
+         when 4
+         if is_trader?
+          puts "1.Recent Trades"
+          puts "2.Name Of Farmer You Have Traded With The Most"
+          puts "3.Most Expensive Trade"
+          Trade.find_by(buyer_id: user.id)
+         else
+          puts "1.Recent Trades"
+          puts "2.Name Of Trader You Have Traded With The Most"
+          puts "3.Most Expensive Trade"
+         end
+         when 5 
            
          login_menu     
         
