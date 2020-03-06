@@ -13,14 +13,14 @@ T4 =  Trade.create(buyer_id:Og.id ,seller_id:Billy.id,price:800,quantity_of_corn
 T5 =  Trade.create(buyer_id:Og.id ,seller_id:Billy.id,price:500,quantity_of_corn:200,pending_buyer:false,pending_seller:false)
 
 
-B1=Bid.create(timestamp:Time.now, price:95, quantity:10,buyer_id:Og.id )
+B1=Bid.create(timestamp:Time.now, price:60, quantity:10,buyer_id:Og.id )
 B2 =Bid.create(timestamp:Time.now, price:85, quantity:20,buyer_id:Matt.id )
 B3=Bid.create(timestamp:Time.now, price:90, quantity:30,buyer_id:Matt.id )
-B4=Bid.create(timestamp:Time.now, price:100, quantity:40,buyer_id:Og.id )
+B4=Bid.create(timestamp:Time.now, price:70, quantity:40,buyer_id:Og.id )
 
 
-O1=Offer.create(timestamp:Time.now, price:105, quantity:5,seller_id:Cornelius.id)
-O2=Offer.create(timestamp:Time.now, price:100, quantity:50,seller_id:Billy.id)
+O1=Offer.create(timestamp:Time.now, price:118, quantity:5,seller_id:Cornelius.id)
+O2=Offer.create(timestamp:Time.now, price:130, quantity:50,seller_id:Billy.id)
 O3=Offer.create(timestamp:Time.now, price:110, quantity:100,seller_id:Billy.id)
 O4=Offer.create(timestamp:Time.now, price:115, quantity:20,seller_id:Cornelius.id)
 O5=Offer.create(timestamp:Time.now, price:120, quantity:10,seller_id:Billy.id)

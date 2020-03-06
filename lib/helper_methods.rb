@@ -15,11 +15,11 @@ def find_farmer(name)
 end
 
 def find_trader_trades(user)
-    Trade.where(buyer_id:user.id,pending_buyer:false)
+    Trade.where(buyer_id:user.id,pending_buyer:false,pending_seller:false)
 end
   
 def find_farmer_trades(user)
-    Trade.where(seller_id:user.id,pending_seller:false)
+    Trade.where(seller_id:user.id,pending_seller:false,pending_buyer:false)
 end
 
 
