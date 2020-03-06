@@ -2,6 +2,7 @@
 ######### TRADER_OTC_LOGIC ###########
 
 def buy_corn_otc(user)
+    bumper(9)
     puts "How much corn you buyin'?"
     quantity_of_corn = get_user_integer
     puts "At what price ???"
@@ -14,7 +15,7 @@ def buy_corn_otc(user)
 end 
 
 def pending_buys(user)
-   
+    bumper(2)
     Trade.where(buyer_id:user.id,pending_buyer:true).each do |pending_trade|  
         total=pending_trade.quantity_of_corn* pending_trade.price
      puts "Do you want to buy #{pending_trade.quantity_of_corn} corn at a price of $#{pending_trade.price} to 
@@ -34,7 +35,9 @@ def pending_buys(user)
             
         when 2
             pending_trade.destroy
-
+        
+        else
+         pending_buys(user)
         end 
     end 
    home_menu(user)
@@ -45,6 +48,7 @@ def pending_buys(user)
 ######################FARMER OTC LOGIC#############################
 
 def sell_corn_otc(user) 
+    bumper(9)
     puts "How much corn you sellin'? "
     quantity_of_corn = get_user_integer
     #check if farmer can sell that amount 
@@ -79,7 +83,8 @@ def pending_sales(user)
             
         when 2
             pending_trade.destroy
-
+        else
+            pending_sales(user)
         end 
    end 
    home_menu(user)

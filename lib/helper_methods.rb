@@ -3,7 +3,7 @@ def get_user_integer
 end 
 
 def get_user_string
-    gets.chomp.to_s
+    gets.chomp.to_s.strip
 end 
 
 def is_trader?(user)
@@ -19,6 +19,14 @@ def find_trader_trades(user)
 end
   
 def find_farmer_trades(user)
-    Trade.where(seller_id:user.id,pending_buyer:false)
+    Trade.where(seller_id:user.id,pending_seller:false)
 end
+
+
+def bumper(n)
+    if n >=0
+    puts""
+    bumper(n-1)
+    end 
+end 
 

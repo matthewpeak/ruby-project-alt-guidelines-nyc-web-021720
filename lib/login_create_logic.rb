@@ -7,6 +7,7 @@ def create_trader(name,cash,password)
 end 
 
 def create_user 
+    bumper(5)
     puts "Trader or Farmer?"
     type = get_user_string
     puts "Name?"
@@ -24,10 +25,14 @@ def create_user
         cash=get_user_integer
         
         home_menu(create_trader(name,cash,password))
+    else 
+     "Type Better You Messed Up"
+     login_menu
     end 
 end 
 
 def login
+    bumper(5)
     puts "Farmer or Trader"
     type=get_user_string
     if type=="Farmer"
@@ -35,21 +40,25 @@ def login
         name=get_user_string
         puts "Password"
         password=get_user_string
-       if Farmer.find_by(name:name).password == password
+       if Farmer.find_by(name:name)!=nil && Farmer.find_by(name:name).password == password
          home_menu(Farmer.find_by(name:name))
        else
-        puts "wrong pass"
+        puts "wrong name or wrong pass"
+        login_menu
        end 
     elsif type=="Trader"
         puts "Name?"
         name=get_user_string
         puts "Password"
         password=get_user_string
-       if Trader.find_by(name:name).password == password
+       if Trader.find_by(name:name) != nil && Trader.find_by(name:name).password == password
          home_menu(Trader.find_by(name:name))
        else
-        puts "wrong pass"
+        puts "wrong name or wrong pass"
+        login_menu
        end 
+    else 
+     "Type better you messed up "
        login_menu
     end 
     
